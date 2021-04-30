@@ -1,0 +1,52 @@
+
+contract OracleConnector =
+
+    datatype event = QueryCreated(address, bytes(32), int, string)
+
+    record state = {
+        reqc : map(address, int),
+        callback_addresses : map(address, bool),
+        owners: map(address, bool)
+     }
+
+
+    stateful entrypoint init() = { 
+            reqc = {},
+            callback_addresses = {},
+            owners = {[Call.caller] = true}
+         }
+    
+    stateful entrypoint query(args: string) : bytes(32) =
+         require(Address.is_contract(Call.caller), "Only a contract can call it!")
+         if(Map.lookup(Call.caller, state.reqc) == None)
+            put(state{reqc[Call.caller] = 0})
+         put(state{reqc[Call.caller] = state.reqc[Call.caller] + 1})
+         let uniq_id : bytes(32) = Crypto.sha3(String.concat(String.concat(Address.to_str(Contract.address), Address.to_str(Call.caller)), Int.to_str(state.reqc[Call.caller])))
+         Chain.event(QueryCreated(Call.caller, uniq_id, Chain.timestamp, args))
+         uniq_id
+        
+    stateful entrypoint contract_address() : address =
+        Contract.address
+    
+    stateful entrypoint addCallBackAddress(addr: address) : bool =
+        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+        put(state{callback_addresses[addr] = true})
+        true
+    
+    stateful entrypoint canCallBack() : bool =
+        if(Map.lookup(Call.caller, state.callback_addresses) == None)
+          abort("Only accepted address can send callback")
+        state.callback_addresses[Call.caller] == true
+
+    stateful entrypoint withdrawFunds(send_to: address, amount: int) =
+        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+        Chain.spend(send_to, amount)
+    
+    public entrypoint getCurrentContractBalance() : int =
+        Contract.balance
+    
+    payable public stateful entrypoint acceptAssets() : int =
+        Contract.balance
+
+    
+    
