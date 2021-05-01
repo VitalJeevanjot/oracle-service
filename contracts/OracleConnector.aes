@@ -1,9 +1,10 @@
 
 contract OracleConnector =
 
-    datatype event = QueryCreated(address, bytes(32), int, string)
+    datatype event = QueryCreated(address, bytes(32), int, string) | OracleCreated(oracle(string, string), string)
 
     record state = {
+        source_oracle : map(bytes(32), oracle(string, string)),
         reqc : map(address, int),
         callback_addresses : map(address, bool),
         owners: map(address, bool)
@@ -11,11 +12,19 @@ contract OracleConnector =
 
 
     stateful entrypoint init() = { 
+            source_oracle = {},
             reqc = {},
             callback_addresses = {},
             owners = {[Call.caller] = true}
          }
-    
+
+    payable stateful entrypoint createOracle(oracleId: bytes(32), qfee : int, rttl : int) : oracle(string, string) =
+        // required a community confirmation (DAO) and fee in tokens which will be splitted to voters
+        require(Map.lookup(oracleId, state.source_oracle) == None, "This type of oracle was already registered once.")
+        let oracle_created : oracle(string, string) = Oracle.register(Contract.address, qfee, RelativeTTL(rttl))
+        Chain.event(OracleCreated(oracle_created, "New oracle created"))
+        oracle_created
+
     stateful entrypoint query(args: string) : bytes(32) =
          require(Address.is_contract(Call.caller), "Only a contract can call it!")
          if(Map.lookup(Call.caller, state.reqc) == None)
@@ -46,6 +55,7 @@ contract OracleConnector =
         Contract.balance
     
     payable public stateful entrypoint acceptAssets() : int =
+        //Take in funds
         Contract.balance
 
     

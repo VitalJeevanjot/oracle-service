@@ -1,0 +1,26 @@
+contract OracleAddressResolver =
+    record state = {
+        addr: address,
+        owner: address
+     }
+
+    stateful entrypoint init(addr: address) = { 
+            addr = addr,
+            owner = Call.caller
+         }
+
+    stateful entrypoint changeOwner(new_owner: address) : bool = 
+        require(state.owner == Call.caller, "Only owner can call it")
+        put(state{owner = new_owner})
+        true
+    
+    public entrypoint getOwner() : address =
+        state.owner
+    
+    public entrypoint getAddress() : address =
+        state.addr
+
+    stateful entrypoint setAddress(new_addr: address) : bool = 
+        require(state.owner == Call.caller, "Only owner can call it")
+        put(state{addr = new_addr})
+        true

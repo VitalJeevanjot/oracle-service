@@ -1,3 +1,14 @@
+contract OracleConnector =
+    entrypoint createOracle : (bytes(32), int, int) => bool
+    entrypoint query: (string) => bytes(32)
+    entrypoint canCallBack: () => bool
+
+contract OracleAddressResolver =
+    entrypoint getAddress : () => address
+
 namespace SayAPI =
-    type number = int
-    function inc(x : number) : number = x + 1
+
+    public function getAddress() : address =
+        let ar : OracleAddressResolver = ct_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
+        ar.getAddress()
+        
