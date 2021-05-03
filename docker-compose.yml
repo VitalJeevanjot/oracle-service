@@ -1,7 +1,9 @@
 version: '3'
 services:
   node1:
-    image: 'aeternity/aeternity:${NODE_TAG}'
+    # image: 'aeternity/aeternity:${NODE_TAG}'
+    image: 'aeternity/aeternity:v6.0.0-rc1'
+    # image: 'aeternity/aeternity:v0.0.0-iris'
     hostname: node1
     environment:
       AETERNITY_CONFIG: /home/aeternity/aeternity.yaml
