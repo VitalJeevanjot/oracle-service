@@ -30,6 +30,7 @@ contract OracleConnector =
          }
          
     stateful entrypoint createOracle(oracleId: bytes(32)) : oracle(string, string) =
+        // Soon DAO mechanics will be used to create new oracles
         require(Address.is_contract(Call.caller), "Only a contract can call it!")
         require(Map.lookup(oracleId, state.source_oracle) == None, "This type of oracle was already registered once.")
         let oracle_created : oracle(string, string) = Oracle.register(Call.caller, state.base_fee, RelativeTTL(state.ttl))

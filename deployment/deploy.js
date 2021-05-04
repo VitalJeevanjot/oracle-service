@@ -17,42 +17,14 @@
 const Deployer = require('aeproject-lib').Deployer;
 var fs = require('fs');
 
-const Say = `
-namespace Saydummy =
-    public function dummy() : bool =
-        true
-
-contract OracleConnector =
-    entrypoint createOracle : (bytes(32), int, int) => bool
-    entrypoint query: (string) => bytes(32)
-    entrypoint canCallBack: () => bool
-
-contract OracleAddressResolver =
-    entrypoint getAddress : () => address
-
-namespace Say =
-    public function getOracleAddress() : address =
-        let ar : OracleAddressResolver = ct_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
-        ar.getAddress()
-
-    public function canCallBack() : bool =
-        let ar : OracleConnector = Address.to_contract(getOracleAddress())
-        ar.canCallBack()
-
-
-contract Boolean =
-  record boolean = {
-    ok: bool
-   }
-
-`
 
 const deploy = async (network, privateKey, compiler, networkId) => {
     let deployer = new Deployer(network, privateKey, compiler, networkId)
     console.log(deployer)
     // Concat the Library with contract and send.
+    let library = fs.readFileSync('./contracts/libs/Say.aes')
     let file_content = fs.readFileSync('./contracts/MyContract.aes')
-    let merged_contract = Say + file_content.toString().split("\n").slice(1).join("\n")
+    let merged_contract = library.toString() + file_content.toString().split("\n").slice(1).join("\n")
     // console.log(merged_contract)
     fs.writeFileSync('./contracts/merged.aes', merged_contract)
 

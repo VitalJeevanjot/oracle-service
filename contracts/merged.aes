@@ -27,5 +27,6 @@ contract Boolean =
    }
 
 contract MyContract =
+    
     public entrypoint plus() : address =
       Say.getOracleAddress()
