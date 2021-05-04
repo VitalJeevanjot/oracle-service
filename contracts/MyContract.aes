@@ -2,4 +2,3 @@ include "./libs/Say.aes"
 contract MyContract =
     public entrypoint plus() : address =
       Say.getOracleAddress()
-        

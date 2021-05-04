@@ -1,6 +1,7 @@
 namespace Saydummy =
     public function dummy() : bool =
         true
+
 contract OracleConnector =
     entrypoint createOracle : (bytes(32), int, int) => bool
     entrypoint query: (string) => bytes(32)
@@ -8,10 +9,15 @@ contract OracleConnector =
 
 contract OracleAddressResolver =
     entrypoint getAddress : () => address
+
 namespace Say =
     public function getOracleAddress() : address =
         let ar : OracleAddressResolver = ct_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
         ar.getAddress()
+
+    public function canCallBack() : bool =
+        let ar : OracleConnector = Address.to_contract(getOracleAddress())
+        ar.canCallBack()
         
 
 contract Boolean =

@@ -1,0 +1,13 @@
+HTTP/1.1 400 Bad Request
+Date: Mon, 22 Mar 2021 13:15:35 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 44
+Connection: keep-alive
+Set-Cookie: __cfduid=d4ac08cc2d2066f17b6031e3c8c2c26491616418935; expires=Wed, 21-Apr-21 13:15:35 GMT; path=/; domain=.pro.coinbase.com; HttpOnly; SameSite=Lax
+CF-Cache-Status: EXPIRED
+cf-request-id: 08fbaca989000030ce8b386000000001
+Expect-CT: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+Server: cloudflare
+CF-RAY: 633fb088de2430ce-ORD
+
+{"message":"User-Agent header is required."}

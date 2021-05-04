@@ -1,3 +1,0 @@
-Ae testnet:
-Oracle Connector: ak_2d8JL9VjJ1MdMHHcBAEEJ6pdiJgBbLGWFUi5RB85tn8bKz5jtD
-Oracle AddressRes: ak_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
