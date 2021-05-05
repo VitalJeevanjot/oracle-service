@@ -1,7 +1,7 @@
 
 contract OracleConnector =
 
-    datatype event = QueryCreated(address, bytes(32), int, string) 
+    datatype event = QueryCreated(bytes(32), bytes(32), int, string) 
                      | OracleCreated(oracle(string, string), string)
 
     record state = {
@@ -22,29 +22,33 @@ contract OracleConnector =
             reqc = {},
             callback_addresses = {},
             owners = {[Call.caller] = true},
-            base_fee = 1000,
+            base_fee = 1,
             queries = {},
             ttl = 10000, 
             qttl = 1000,
             rttl = 1000
          }
          
-    stateful entrypoint createOracle(oracleId: bytes(32)) : oracle(string, string) =
+    stateful entrypoint createOracle(oracle_id: bytes(32)) : bytes(32) =
         // Soon DAO mechanics will be used to create new oracles
-        require(Address.is_contract(Call.caller), "Only a contract can call it!")
-        require(Map.lookup(oracleId, state.source_oracle) == None, "This type of oracle was already registered once.")
+        // require(Address.is_contract(Call.caller), "Only a contract can call it!")
+        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+        require(Map.lookup(oracle_id, state.source_oracle) == None, "This type of oracle was already registered once.")
         let oracle_created : oracle(string, string) = Oracle.register(Call.caller, state.base_fee, RelativeTTL(state.ttl))
+        let uniq_id : bytes(32) = Crypto.sha3(String.concat(String.concat(Address.to_str(Contract.address), Address.to_str(Call.caller)), Int.to_str(Chain.timestamp)))
+        put(state{source_oracle[uniq_id] = oracle_created})
         Chain.event(OracleCreated(oracle_created, "New oracle created"))
-        oracle_created
+        uniq_id
 
-    stateful entrypoint query(args: string, oracle_id: bytes(32)) : bytes(32) =
+    payable stateful entrypoint query(args: string, oracle_id: bytes(32)) : bytes(32) =
+         require(Address.is_contract(Call.caller), "Only a contract can call it!")
          if(Map.lookup(Call.caller, state.reqc) == None)
             put(state{reqc[Call.caller] = 0})
          put(state{reqc[Call.caller] = state.reqc[Call.caller] + 1})
          let uniq_id : bytes(32) = Crypto.sha3(String.concat(String.concat(Address.to_str(Contract.address), Address.to_str(Call.caller)), Int.to_str(state.reqc[Call.caller])))
          require(state.base_fee =< Call.value, "insufficient value for qfee") 
          put(state{queries[uniq_id] = Oracle.query(state.source_oracle[oracle_id], args, state.base_fee, RelativeTTL(state.qttl), RelativeTTL(state.rttl))})
-         Chain.event(QueryCreated(Call.caller, uniq_id, Chain.timestamp, args))
+         Chain.event(QueryCreated(oracle_id, uniq_id, Chain.timestamp, args))
          uniq_id
         
     
@@ -53,6 +57,8 @@ contract OracleConnector =
         put(state{callback_addresses[addr] = true})
         true
 
+    stateful entrypoint getAnswer(oracle_id: bytes(32), query_id: bytes(32)) : option(string) =
+        Oracle.get_answer(state.source_oracle[oracle_id], state.queries[query_id])
 
     // Changes 
 
@@ -83,6 +89,12 @@ contract OracleConnector =
         true
 
     // Checks
+
+    stateful entrypoint getBaseFee() : int =
+        state.base_fee
+        
+    stateful entrypoint listOracleId() : list(bytes(32) * oracle(string,string)) =
+        Map.to_list(state.source_oracle)
 
     stateful entrypoint canCallBack() : bool =
         if(Map.lookup(Call.origin, state.callback_addresses) == None)
