@@ -1,4 +1,4 @@
 Ae testnet:
 Oracle Connector: ak_2emF8WoonnkNY6yMKhwS7xoHmP4y3531urjrvwgxJvJdUR8wuB
 Oracle Address Resolver: ak_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
-merged.aes: ct_K5wQ1y12jwQa4bcPLFH5bKeR7Pkizjk6u56iAgZjFgGwfedMv
+merged.aes: ct_2tYAswbCTv6zjsEmxDdgPu548czMJ4BGqd9YPBHDAF99ihw3YR
