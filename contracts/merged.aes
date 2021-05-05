@@ -5,6 +5,7 @@ namespace Saydummy =
 contract OracleConnector =
     entrypoint createOracle : (bytes(32)) => bytes(32)
     payable entrypoint query: (string, bytes(32)) => bytes(32)
+    entrypoint getAnswer : (bytes(32), bytes(32)) => option(string)
     entrypoint canCallBack: () => bool
     entrypoint getBaseFee: () => int
 
@@ -17,6 +18,7 @@ namespace Say =
         oracle_address: OracleAddressResolver,
         oracle_connector: OracleConnector
       }
+
     public function set() : setup =
         let _oracle_address : OracleAddressResolver = ct_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
         let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress())
@@ -31,6 +33,9 @@ namespace Say =
     
     public function getBaseFee() : int =
         set().oracle_connector.getBaseFee()
+
+    public function getAnswer(oracle_id: bytes(32), query_id: bytes(32)) : option(string) =
+        set().oracle_connector.getAnswer(oracle_id, query_id)
 
     stateful function query(args: string, oracle_id: bytes(32), value_received: int) : bytes(32) =
         set().oracle_connector.query(args, oracle_id, value = value_received)
@@ -47,12 +52,14 @@ contract Boolean =
 contract MyContract =
     record state = {
       oracle_id : bytes(32),
-      query_id : bytes(32)
+      query_id : bytes(32),
+      answer: option(string)
      }
 
     stateful entrypoint init() = {
       oracle_id = #000000000000000000000000000000000000000000000000000000000000000,
-      query_id = #000000000000000000000000000000000000000000000000000000000000000
+      query_id = #000000000000000000000000000000000000000000000000000000000000000,
+      answer = None
      }
     public entrypoint plus() : address =
       Say.getOracleAddress()
@@ -62,4 +69,8 @@ contract MyContract =
       let _id : bytes(32) = Say.query(args, state.oracle_id, Call.value)
       put(state{query_id=_id})
       _id
+    
+    stateful entrypoint getAnswer() : option(string) =
+      put(state{answer = Say.getAnswer(state.oracle_id, state.query_id)})
+      state.answer
 

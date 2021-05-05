@@ -3,14 +3,15 @@ namespace Saydummy =
         true
 
 contract OracleConnector =
-    entrypoint createOracle : (bytes(32)) => bytes(32)
-    payable entrypoint query: (string, bytes(32)) => bytes(32)
-    entrypoint getAnswer : (bytes(32), bytes(32)) => option(string)
+    payable entrypoint query: (string) => bytes(32)
+    entrypoint getAnswer : (bytes(32)) => option(string)
     entrypoint canCallBack: () => bool
     entrypoint getBaseFee: () => int
 
 contract OracleAddressResolver =
-    entrypoint getAddress : () => address
+    entrypoint getAddress : (int) => address
+    entrypoint setContractOracle : (int) => bool
+    entrypoint getContractOracle : (address) => int
 
 namespace Say =
 
@@ -18,15 +19,23 @@ namespace Say =
         oracle_address: OracleAddressResolver,
         oracle_connector: OracleConnector
       }
+    // Must run this to select oracle at init
+    public function setOracle(oracle_id: int) : bool =
+        let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
+        _oracle_address.setContractOracle(oracle_id)
+    
+    public function getOracleId() : int =
+        let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
+        _oracle_address.getContractOracle(Call.caller)
 
     public function set() : setup =
-        let _oracle_address : OracleAddressResolver = ct_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
-        let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress())
+        let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
+        let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress(getOracleId()))
         
         {oracle_address = _oracle_address, oracle_connector = _oracle_connector}
     
     public function getOracleAddress() : address =
-        set().oracle_address.getAddress()
+        set().oracle_address.getAddress(getOracleId())
 
     public function canCallBack() : bool =
         set().oracle_connector.canCallBack()
@@ -34,14 +43,11 @@ namespace Say =
     public function getBaseFee() : int =
         set().oracle_connector.getBaseFee()
 
-    public function getAnswer(oracle_id: bytes(32), query_id: bytes(32)) : option(string) =
-        set().oracle_connector.getAnswer(oracle_id, query_id)
+    public function getAnswer(query_id: bytes(32)) : option(string) =
+        set().oracle_connector.getAnswer(query_id)
 
-    stateful function query(args: string, oracle_id: bytes(32), value_received: int) : bytes(32) =
-        set().oracle_connector.query(args, oracle_id, value = value_received)
-
-    public function createOracle(oracle_name: bytes(32)) : bytes(32) =
-        set().oracle_connector.createOracle(oracle_name)
+    stateful function query(args: string, value_received: int) : bytes(32) =
+        set().oracle_connector.query(args, value = value_received)
 
 
 contract Boolean =

@@ -1,13 +1,13 @@
 include "./libs/Say.aes"
 contract MyContract =
     record state = {
-      oracle_id : bytes(32),
+      oracle_id : int,
       query_id : bytes(32),
       answer: option(string)
      }
 
     stateful entrypoint init() = {
-      oracle_id = #000000000000000000000000000000000000000000000000000000000000000,
+      oracle_id = 1,
       query_id = #000000000000000000000000000000000000000000000000000000000000000,
       answer = None
      }
@@ -16,11 +16,11 @@ contract MyContract =
 
     payable stateful entrypoint query(args: string) : bytes(32) =
       require(Say.getBaseFee() =< Call.value, "Insufficient fee")
-      let _id : bytes(32) = Say.query(args, state.oracle_id, Call.value)
+      let _id : bytes(32) = Say.query(args, Call.value)
       put(state{query_id=_id})
       _id
     
     stateful entrypoint getAnswer() : option(string) =
-      put(state{answer = Say.getAnswer(state.oracle_id, state.query_id)})
+      put(state{answer = Say.getAnswer(state.query_id)})
       state.answer
 

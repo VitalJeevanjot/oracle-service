@@ -1,24 +1,24 @@
-
 contract OracleConnector =
 
-    datatype event = QueryCreated(bytes(32), bytes(32), int, string) 
+    datatype event = QueryCreated(oracle(string,string), bytes(32), int, string) 
                      | OracleCreated(oracle(string, string), string)
 
     record state = {
-        source_oracle : map(bytes(32), oracle(string, string)),
+        source_oracle : oracle(string, string),
         reqc : map(address, int),
         callback_addresses : map(address, bool),
         owners: map(address, bool),
         queries: map(bytes(32), oracle_query(string, string)),
         base_fee: int,
-        ttl: int, // for oracle (like rttl)
+        ttl: int, // for oracle ttl
         qttl: int,
-        rttl: int // for query
+        rttl: int // for query response ttl
      }
 
 
-    stateful entrypoint init() = { 
-            source_oracle = {},
+    stateful entrypoint init () =
+       let oracle_created : oracle(string, string) = createOracle()
+       {source_oracle = oracle_created,
             reqc = {},
             callback_addresses = {},
             owners = {[Call.caller] = true},
@@ -26,29 +26,23 @@ contract OracleConnector =
             queries = {},
             ttl = 10000, 
             qttl = 1000,
-            rttl = 1000
-         }
+            rttl = 1000}
          
-    stateful entrypoint createOracle(oracle_id: bytes(32)) : bytes(32) =
-        // Soon DAO mechanics will be used to create new oracles
-        // require(Address.is_contract(Call.caller), "Only a contract can call it!")
-        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
-        require(Map.lookup(oracle_id, state.source_oracle) == None, "This type of oracle was already registered once.")
-        let oracle_created : oracle(string, string) = Oracle.register(Call.caller, state.base_fee, RelativeTTL(state.ttl))
-        let uniq_id : bytes(32) = Crypto.sha3(String.concat(String.concat(Address.to_str(Contract.address), Address.to_str(Call.caller)), Int.to_str(Chain.timestamp)))
-        put(state{source_oracle[uniq_id] = oracle_created})
+    stateful entrypoint createOracle() : oracle(string, string) =
+        let oracle_created : oracle(string, string) = Oracle.register(Contract.address, 1, RelativeTTL(10000))
         Chain.event(OracleCreated(oracle_created, "New oracle created"))
-        uniq_id
+        oracle_created
 
-    payable stateful entrypoint query(args: string, oracle_id: bytes(32)) : bytes(32) =
+    payable stateful entrypoint query(args: string) : bytes(32) =
          require(Address.is_contract(Call.caller), "Only a contract can call it!")
          if(Map.lookup(Call.caller, state.reqc) == None)
             put(state{reqc[Call.caller] = 0})
          put(state{reqc[Call.caller] = state.reqc[Call.caller] + 1})
+         // Required, so queries can be mapped with unique key
          let uniq_id : bytes(32) = Crypto.sha3(String.concat(String.concat(Address.to_str(Contract.address), Address.to_str(Call.caller)), Int.to_str(state.reqc[Call.caller])))
          require(state.base_fee =< Call.value, "insufficient value for qfee") 
-         put(state{queries[uniq_id] = Oracle.query(state.source_oracle[oracle_id], args, state.base_fee, RelativeTTL(state.qttl), RelativeTTL(state.rttl))})
-         Chain.event(QueryCreated(oracle_id, uniq_id, Chain.timestamp, args))
+         put(state{queries[uniq_id] = Oracle.query(state.source_oracle, args, state.base_fee, RelativeTTL(state.qttl), RelativeTTL(state.rttl))})
+         Chain.event(QueryCreated(state.source_oracle, uniq_id, Chain.timestamp, args))
          uniq_id
         
     
@@ -57,30 +51,30 @@ contract OracleConnector =
         put(state{callback_addresses[addr] = true})
         true
 
-    stateful entrypoint getAnswer(oracle_id: bytes(32), query_id: bytes(32)) : option(string) =
-        Oracle.get_answer(state.source_oracle[oracle_id], state.queries[query_id])
+    stateful entrypoint getAnswer(query_id: bytes(32)) : option(string) =
+        Oracle.get_answer(state.source_oracle, state.queries[query_id])
 
-    // Changes 
+    // Changes - Not required anymore, Using different approach
 
-    stateful entrypoint changeBaseFee(new_fee: int) : bool =
-        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
-        put(state{base_fee = new_fee})
-        true
+    // stateful entrypoint changeBaseFee(new_fee: int) : bool =
+    //     require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+    //     put(state{base_fee = new_fee})
+    //     true
     
-    stateful entrypoint changeTtl(ttl: int) : bool =
-        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
-        put(state{ttl = ttl})
-        true
+    // stateful entrypoint changeTtl(ttl: int) : bool =
+    //     require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+    //     put(state{ttl = ttl})
+    //     true
     
-    stateful entrypoint changeQttl(qttl: int) : bool =
-        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
-        put(state{qttl = qttl})
-        true
+    // stateful entrypoint changeQttl(qttl: int) : bool =
+    //     require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+    //     put(state{qttl = qttl})
+    //     true
     
-    stateful entrypoint changeRttl(rttl: int) : bool =
-        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
-        put(state{rttl = rttl})
-        true
+    // stateful entrypoint changeRttl(rttl: int) : bool =
+    //     require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+    //     put(state{rttl = rttl})
+    //     true
     
 
     stateful entrypoint withdrawFunds(send_to: address, amount: int) : bool =
@@ -92,9 +86,13 @@ contract OracleConnector =
 
     stateful entrypoint getBaseFee() : int =
         state.base_fee
-        
-    stateful entrypoint listOracleId() : list(bytes(32) * oracle(string,string)) =
-        Map.to_list(state.source_oracle)
+
+    // Not rquired for now.        
+    // stateful entrypoint listOracleId() : list(bytes(32) * oracle(string,string)) =
+    //     Map.to_list(state.source_oracle)
+
+    stateful entrypoint getOracle() : oracle(string, string) =
+         state.source_oracle
 
     stateful entrypoint canCallBack() : bool =
         if(Map.lookup(Call.origin, state.callback_addresses) == None)
@@ -102,7 +100,6 @@ contract OracleConnector =
         state.callback_addresses[Call.origin] == true
 
 
-    
     public entrypoint getCurrentContractBalance() : int =
         Contract.balance
     
@@ -111,6 +108,9 @@ contract OracleConnector =
     
     stateful entrypoint contractAddress() : address =
         Contract.address
+
+
+// > Activate deactivate oracles.
     
 
     
