@@ -24,7 +24,7 @@ const deploy = async (network, privateKey, compiler, networkId) => {
     // Concat the Library with contract and send.
     let library = fs.readFileSync('./contracts/libs/Say.aes')
     let file_content = fs.readFileSync('./contracts/MyContract.aes')
-    let merged_contract = library.toString() + file_content.toString().split("\n").slice(1).join("\n")
+    let merged_contract = library.toString() + "\n\n" + file_content.toString().split("\n").slice(1).join("\n")
     // console.log(merged_contract)
     fs.writeFileSync('./contracts/merged.aes', merged_contract)
 

@@ -2,7 +2,7 @@ const fs = require('fs');
 const { Universal, Node, MemoryAccount } = require('@aeternity/aepp-sdk');
 // import { parseBigNumber, asBigNumber, isBigNumber, ceil } from '@aeternity/aepp-sdk/es/utils/bignumber'
 const OracleContractCode = fs.readFileSync(__dirname + '/../contracts/OracleConnector.aes', 'utf-8');
-const contract_address = "ct_eBiy91R7rsydMCoocs1oP6AgFoMAeXkcdMJ8e7mwikmL7dPKA"
+const contract_address = "ct_2LCaoee9ZV9Yqsnv5pfgwACiFHagAxwgC7DNHnSEwBdiGV4Lg6"
 var blake2b = require('blake2b')
 var axios = require('axios')
 var url = "https://sdk-testnet.aepps.com"

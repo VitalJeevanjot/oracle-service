@@ -12,14 +12,16 @@ contract OracleAddressResolver =
 
 namespace Say =
 
-    record init = {
+    record setup = {
         oracle_address: OracleAddressResolver,
         oracle_connector: OracleConnector
       }
-    public function set() : init =
-        let addresses : init = {oracle_address = ct_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um,
-                              oracle_connector = Address.to_contract(getOracleAddress()) }
-        addresses
+    public function set() : setup =
+        let _oracle_address : OracleAddressResolver = ct_xRAL2ZaqffbTAeQrAunrR8jxdg9YbJvuEnFFJC8g8oW4LJ7Um
+        let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress())
+        
+        {oracle_address = _oracle_address, oracle_connector = _oracle_connector}
+    
     public function getOracleAddress() : address =
         set().oracle_address.getAddress()
 
@@ -31,7 +33,6 @@ namespace Say =
 
     public function createOracle(oracle_name: bytes(32)) : oracle(string, string) =
         set().oracle_connector.createOracle(oracle_name)
-
 
 
 contract Boolean =
