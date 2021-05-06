@@ -1,4 +1,9 @@
 Ae testnet:
-Oracle Connector: ct_iE8siQZQebyPnp6FpsZKoqvHqtDuYon2h2vBTQxKBWwpo7djD
-Oracle Address Resolver: ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
-merged.aes: ct_hEDSk544yd7aGy9gZC6iEZkxj3TucsJ8fo37jR7bDikiyQnno
+Oracle Connector _ plain: ct_MATVkhvFHU6nSHbHBPK2wDriRd9FFmtiMTgKYTVcgX1y35VXN
+Oracle Address Resolver: ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
+merged.aes: ct_jmuDPJp9a6qi7zgrPDsdWeKa5Lgnxbbuewpy9A6AsHV3LHVC5
+
+
+
+queries:
+- beadba10021788f2f3a8518ba571255b202d6bfdef709b78cafc61e2fd69b21d

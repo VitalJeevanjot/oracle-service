@@ -21,15 +21,15 @@ namespace Say =
       }
     // Must run this to select oracle at init
     public function setOracle(oracle_id: string) : bool =
-        let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
+        let _oracle_address : OracleAddressResolver = ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
         _oracle_address.setContractOracle(oracle_id)
     
     public function getOracleId() : string =
-        let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
+        let _oracle_address : OracleAddressResolver = ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
         _oracle_address.getContractOracle(Call.caller)
 
     public function set() : setup =
-        let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
+        let _oracle_address : OracleAddressResolver = ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
         let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress(getOracleId()))
         
         {oracle_address = _oracle_address, oracle_connector = _oracle_connector}

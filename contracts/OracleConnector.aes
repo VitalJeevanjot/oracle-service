@@ -54,6 +54,8 @@ contract OracleConnector =
     stateful entrypoint getAnswer(query_id: bytes(32)) : option(string) =
         Oracle.get_answer(state.source_oracle, state.queries[query_id])
 
+    stateful entrypoint getQuery(query_id: bytes(32)) : oracle_query(string, string) =
+        state.queries[query_id]
     // Changes - Not required anymore, Using different approach
 
     // stateful entrypoint changeBaseFee(new_fee: int) : bool =
