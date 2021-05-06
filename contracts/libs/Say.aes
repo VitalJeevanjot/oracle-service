@@ -9,9 +9,9 @@ contract OracleConnector =
     entrypoint getBaseFee: () => int
 
 contract OracleAddressResolver =
-    entrypoint getAddress : (int) => address
-    entrypoint setContractOracle : (int) => bool
-    entrypoint getContractOracle : (address) => int
+    entrypoint getAddress : (string) => address
+    entrypoint setContractOracle : (string) => bool
+    entrypoint getContractOracle : (address) => string
 
 namespace Say =
 
@@ -20,11 +20,11 @@ namespace Say =
         oracle_connector: OracleConnector
       }
     // Must run this to select oracle at init
-    public function setOracle(oracle_id: int) : bool =
+    public function setOracle(oracle_id: string) : bool =
         let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
         _oracle_address.setContractOracle(oracle_id)
     
-    public function getOracleId() : int =
+    public function getOracleId() : string =
         let _oracle_address : OracleAddressResolver = ct_2V9V2QLwFk77xvuBgqXJms7edLBknWF8g2fCfbMxkMLoYrUnSH
         _oracle_address.getContractOracle(Call.caller)
 

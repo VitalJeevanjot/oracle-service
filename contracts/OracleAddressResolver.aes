@@ -1,12 +1,12 @@
 contract OracleAddressResolver =
     record state = {
-        addr: map(int, address),
-        contract_oracle: map(address, int),
+        addr: map(string, address),
+        contract_oracle: map(address, string),
         owner: address
      }
 
     stateful entrypoint init(_addr: address) = { 
-            addr = {[1] = _addr},
+            addr = {["oracle_plain"] = _addr},
             contract_oracle = {},
             owner = Call.caller
          }
@@ -19,22 +19,22 @@ contract OracleAddressResolver =
     public entrypoint getOwner() : address =
         state.owner
     
-    public entrypoint getAddress(id: int) : address =
+    public entrypoint getAddress(id: string) : address =
         state.addr[id]
 
-    stateful entrypoint addOrModifyAddress(number: int, new_addr: address) : bool = 
+    stateful entrypoint addOrModifyAddress(name: string, new_addr: address) : bool = 
         require(state.owner == Call.caller, "Only owner can call it")
-        put(state{addr[number] = new_addr})
+        put(state{addr[name] = new_addr})
         true
 
-    stateful entrypoint listOracleAddresses() : list(int * address) =
+    stateful entrypoint listOracleAddresses() : list(string * address) =
          Map.to_list(state.addr)
 
-    stateful entrypoint setContractOracle(oracle_id: int) : bool =
+    stateful entrypoint setContractOracle(oracle_id: string) : bool =
         require(Address.is_contract(Call.caller), "Only smart contracts can call it")
         put(state{contract_oracle[Call.caller] = oracle_id})
         true
     
-    stateful entrypoint getContractOracle(contract_address: address) : int =
+    stateful entrypoint getContractOracle(contract_address: address) : string =
         require(Address.is_contract(Call.caller), "Only smart contracts can call it")
         state.contract_oracle[Call.caller]
