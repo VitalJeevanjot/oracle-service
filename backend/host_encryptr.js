@@ -1,6 +1,8 @@
 require('dotenv').config() // for secret key
 const Cryptr = require('cryptr');
 
+var cors = require('cors')
+
 console.log(process.env.SECRET_KEY)
 
 const cryptr = new Cryptr(process.env.SECRET_KEY);
@@ -13,6 +15,8 @@ const port = 3000
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors())
+
 
 app.get('/get_encrypted_query', (req, res) => {
   console.log(req.query)
