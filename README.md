@@ -1,5 +1,7 @@
 ## Oracle 2.0 service Build on Top Of Aeternity Oracles
 
+Oracle 2.0 provides API built on top of Aeternity blockchain Oracle Service to server URL requests. The API provided by Oracle 2.0 is connected to a smart contract which performs the Question/Answer operations and helps to Integrate More features into current Aeternity Oracle system.
+
 Project have 3 seperate Ends:
 
 - [Smart contracts](https://github.com/genievot/oracle-service/tree/main/contracts)
@@ -27,6 +29,16 @@ Project have 3 seperate Ends:
 - host_encryptr.js: It hosts backend to encrypt queries from fron-end requests
 - index.js: To fetch and answer oracle_plain
 - index_proof & index_ukey: These scripts have similar work as above, Except process queries differently.
+
+### Fron-end
+- Fron-end currently server at https://ae.say.network/ or https://pensive-haibt-8363c5.netlify.app/#/
+- 
+Which encrypts the url with API key or secret or any url that you want to hide while requesting.
+
+![image](https://user-images.githubusercontent.com/40867747/117509532-05b44980-afa8-11eb-9e72-2b0f6556e4bf.png)
+![image](https://user-images.githubusercontent.com/40867747/117509555-15cc2900-afa8-11eb-88de-8b4424d562b7.png)
+
+
 
 
 
