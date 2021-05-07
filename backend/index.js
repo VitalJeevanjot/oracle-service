@@ -7,7 +7,7 @@ const { decodeEvents, SOPHIA_TYPES } = requireESM('@aeternity/aepp-sdk/es/contra
 // import { parseBigNumber, asBigNumber, isBigNumber, ceil } from '@aeternity/aepp-sdk/es/utils/bignumber'
 const OracleContractCode = fs.readFileSync(__dirname + '/../contracts/OracleConnector.aes', 'utf-8');
 // oracle_plain
-const contract_address = "ct_2ZoDc2KTvJ1QiGdBwAvgxzhWgWgzZi6daxC18buXzrxbEuVS7u"
+const contract_address = "ct_2uEWFtsqEhErztjthHrt1UD5QPLAfnpWjDbYUN6FAT5aVZGyUd"
 var blake2b = require('blake2b')
 var axios = require('axios')
 var url = "https://sdk-testnet.aepps.com"
@@ -22,6 +22,10 @@ const keyPair = {
 }
 var client_node = null
 var contract = null
+
+
+var queries = null;
+
 async function initNode () {
   client_node = await Universal({
     nodes: [
@@ -39,180 +43,67 @@ async function initNode () {
   contract = await client_node.getContractInstance(OracleContractCode, { contractAddress: contract_address })
   contract = await client_node.getContractInstance(OracleContractCode, { contractAddress: contract_address })
 
+  let getNumberOfQueries = await contract.methods.getIndexOfQueries()
+  queries = getNumberOfQueries.decodedResult
+
+  console.log("Queries: " + queries)
+
+  StartListening()
 }
 initNode()
 
-async function fullFillQuery (query_id) {
-  let query = await contract.methods.get_query_address(query_id)
-  console.log(query.decodedResult)
+async function StartListening () {
+  async function getQueries () {
+    let getNumberOfQueries = await contract.methods.getIndexOfQueries() // starting form 0
+    let _getNumberOfQueries = getNumberOfQueries.decodedResult
+    console.log("getNumberOfQueries: " + _getNumberOfQueries)
 
-  let question = await contract.methods.get_question(query.decodedResult)
-  console.log(question.decodedResult)
+    if (_getNumberOfQueries > queries) {
+      for (let index = queries + 1; index <= _getNumberOfQueries; index++) {
+        console.log(index + " ===> ")
 
-  // var lat_long = question.decodedResult.split(",")
-  // axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat_long[0]}&lon=${lat_long[1]}&appid=${conf.weather_key}`).then(async (res) => {
-  //   let response = await contract.methods.respond(query.decodedResult, res.data.main.temp.toString())
-  //   console.log(response)
-  // })
+        let getQuery = await contract.methods.getQueryByNumber(index)
+        let _getQuery = getQuery.decodedResult
+        console.log("getQuery: " + _getQuery)
 
-}
+        let getQueryQuestion = await contract.methods.getQuestionByQuery(_getQuery)
+        let _getQueryQuestion = getQueryQuestion.decodedResult
+        console.log("getQueryQuestion: " + _getQueryQuestion)
 
-// websocket listening...
-var WebSocketClient = require('websocket').client;
-
-var client = new WebSocketClient();
-function connect () {
-  client.connect(`wss://testnet.aeternity.io/mdw/websocket`);
-}
-connect()
-
-client.on('connectFailed', function (error) {
-  console.log('Connect Error: ' + error.toString());
-});
-
-client.on('connect', (connection) => {
-  console.log("connected at: " + new Date())
-  console.log('WebSocket Client Connected');
-
-  connection.send(JSON.stringify({
-    op: "Subscribe",
-    payload: "Object",
-    target: contract_address.replace(/^.{2}/g, 'ok')
-  }));
-  connection.on('error', function (error) {
-    console.log("Connection Error: " + error.toString());
-  });
-  connection.on('close', () => {
-    console.log("closed at: " + new Date())
-    connect()
-  });
+        let result = await getResult(_getQueryQuestion)
+        console.log("result " + result)
+        let respondToQuery = await contract.methods.respond(_getQuery, result.toString())
+        let _respondToQuery = respondToQuery.decodedResult
+        console.log("respondToQuery: " + _respondToQuery)
 
 
-  const eventsSchema = [
-    { name: 'QueryCreated', types: [SOPHIA_TYPES.oracle, SOPHIA_TYPES.bytes, SOPHIA_TYPES.int, SOPHIA_TYPES.string] }
-  ]
 
-  connection.on('message', async (message) => {
-    if (message.type === 'utf8' && message.utf8Data.includes("payload")) {
-      var dataToDecode = null
-      if (message.utf8Data !== "connected") {
-        dataToDecode = JSON.parse(message.utf8Data)
-        if (dataToDecode.payload) {
-          var hash = dataToDecode.payload.hash
-          console.log(hash)
-          axios.get(`https://testnet.aeternity.io/v2/transactions/${hash}/info`).then(async (res, err) => {
-            if (err) {
-              console.log("Err: ")
-              console.log(err)
-              console.log(" :Err END ")
-              return
-            }
-            let result = res.data.call_info
-            // console.log(result)
-            let result_args = result.log[0].data
-            let result_query = result.log[0].topics[2]
-            let result_timestamp = result.log[0].topics[3]
-            console.log(decodeEvents(result.log, { schema: eventsSchema }))
-            console.log(result_args)
-            console.log(result_query)
-            console.log(result_timestamp)
-            // console.log(result_args.decodedResult)
-            // console.log(result_query.decodedResult.toString())
-            // let response = await contract.methods.respond(query.decodedResult, res.data.main.temp.toString())
-            // console.log(response.decodedResult)
-
-          })
-        }
-      }
-      else {
-        console.log("--- Other Data ---")
-        console.log(message.utf8Data)
-        console.log("--- Other Data End ---")
+        queries++
       }
     }
-  });
-});
+    getQueries()
+  }
+  getQueries()
+  // setInterval(getQueries, 10000);
+}
+// 
+async function getResult (_args) {
+  let args = _args.split(',')
+  var response = null
+  try {
+    response = await axios.get(args[0])
+  }
+  catch (err) {
+    console.log("ERR ========")
+    console.log(err.message)
+    console.log("ERR END ========")
+    return "ERR:URL"
+  }
 
-
-
-// Decoding functions...
-
-
-
-// const SOPHIA_TYPES = [
-//   'int',
-//   'string',
-//   'tuple',
-//   'address',
-//   'bool',
-//   'list',
-//   'map',
-//   'record',
-//   'option',
-//   'oracle',
-//   'oracleQuery',
-//   'hash',
-//   'signature',
-//   'bytes',
-//   'variant'
-// ].reduce((acc, type) => ({ ...acc, [type]: type }), { ChainTtl: 'Chain.ttl' })
-
-// function decodeEvents (events, options = { schema: [] }) {
-//   if (!events.length) return []
-
-//   return events.map(l => {
-//     const [eName, ...eParams] = l.topics
-//     const hexHash = toBytes(eName, true).toString('hex')
-//     const { schema } = options.schema
-//       .reduce(
-//         (acc, el) => {
-//           if (hash(el.name).toString('hex') === hexHash) {
-//             l.name = el.name
-//             return {
-//               schema: el.types,
-//               name: el.name
-//             }
-//           }
-//           return acc
-//         },
-//         { schema: [] }
-//       )
-//     const { decoded } = schema.reduce((acc, el) => {
-//       if (el === SOPHIA_TYPES.string) {
-//         return { decoded: [...acc.decoded, transformEvent(l.data, el)], params: acc.params }
-//       }
-//       const [event, ...tail] = acc.params
-//       return { decoded: [...acc.decoded, transformEvent(event, el)], params: tail }
-//     }, { decoded: [], params: eParams })
-
-//     return {
-//       ...l,
-//       decoded
-//     }
-//   })
-// }
-
-// function bigNumberToByteArray (x) {
-//   if (!x.isInteger()) throw new Error(`Unexpected not integer value: ${x.toFixed()}`)
-//   let hexString = x.toString(16)
-//   if (hexString.length % 2 > 0) hexString = '0' + hexString
-//   return Buffer.from(hexString, 'hex')
-// }
-
-// function toBytes (val, big = false) {
-//   // """
-//   // Encode a value to bytes.
-//   // If the value is an int it will be encoded as bytes big endian
-//   // Raises ValueError if the input is not an int or string
-
-//   if (val === undefined || val === null) return Buffer.from([])
-//   if (Number.isInteger(val) || BigNumber.isBigNumber(val) || big) {
-//     if (!BigNumber.isBigNumber(val)) val = BigNumber(val)
-//     return bigNumberToByteArray(val)
-//   }
-//   if (typeof val === 'string') {
-//     return val.toString('utf-8')
-//   }
-//   throw new Error('Byte serialization not supported')
-// }
-
+  var result = response.data
+  for (let index = 1; index < args.length; index++) { // nested results
+    result = result[args[index]]
+  }
+  console.log("result: " + result)
+  return result
+}

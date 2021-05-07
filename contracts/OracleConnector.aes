@@ -47,8 +47,8 @@ contract OracleConnector =
          require(state.base_fee =< Call.value, "insufficient value for qfee") 
          let query_created : oracle_query(string, string) = Oracle.query(state.source_oracle, args, state.base_fee, RelativeTTL(state.qttl), RelativeTTL(state.rttl))
          put(state{queries[uniq_id] = query_created})
-         put(state{map_of_queries[state.index_of_queries] = query_created})
          put(state{index_of_queries = state.index_of_queries + 1})
+         put(state{map_of_queries[state.index_of_queries] = query_created})
          Chain.event(QueryCreated(state.source_oracle, uniq_id, Chain.timestamp, args))
          uniq_id
          

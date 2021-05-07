@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { Universal, Node, MemoryAccount, Crypto } = require('@aeternity/aepp-sdk');
 const OracleContractCode = fs.readFileSync(__dirname + '/../contracts/OracleConnector.aes', 'utf-8');
-const contract_address = "ct_2Br7hTDyfgemSF4Jj12bkvdZPx9L237H8LJgu25h3y1j2Z7RFE";
+const contract_address = "ct_2uEWFtsqEhErztjthHrt1UD5QPLAfnpWjDbYUN6FAT5aVZGyUd";
 var url = "https://sdk-testnet.aepps.com"
 var processedIndex = 0
 var Compilerurl = "https://sdk-testnet.aepps.com"

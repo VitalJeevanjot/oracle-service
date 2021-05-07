@@ -1,5 +1,5 @@
 Ae testnet:
-Oracle Connector _ plain: ct_2ZoDc2KTvJ1QiGdBwAvgxzhWgWgzZi6daxC18buXzrxbEuVS7u
+Oracle Connector _ plain: ct_2uEWFtsqEhErztjthHrt1UD5QPLAfnpWjDbYUN6FAT5aVZGyUd
 Oracle Address Resolver: ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
 merged.aes: ct_2ZS3KYWKcAQDzVn6gJBXgFBwRME3cx9a66XHEY2R5nfigzirJd
 
