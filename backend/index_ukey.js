@@ -1,5 +1,8 @@
-// For encrypted queries
 const fs = require('fs');
+require('dotenv').config() // for secret key
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr(process.env.SECRET_KEY);
+
 const { Universal, Node, MemoryAccount } = require('@aeternity/aepp-sdk');
 // import { parseBigNumber, asBigNumber, isBigNumber, ceil } from '@aeternity/aepp-sdk/es/utils/bignumber'
 const OracleContractCode = fs.readFileSync(__dirname + '/../contracts/OracleConnector.aes', 'utf-8');
@@ -67,7 +70,6 @@ async function fullFillQuery (query_id) {
 //   console.log(event.data)
 //   console.log(JSON.parse(JSON.stringify(event.data))); // you get data here when it arrives
 // }
-
 
 // websocket listening...
 var WebSocketClient = require('websocket').client;
