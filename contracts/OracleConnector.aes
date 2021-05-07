@@ -34,7 +34,7 @@ contract OracleConnector =
         oracle_created
 
     payable stateful entrypoint query(args: string) : bytes(32) =
-         require(Address.is_contract(Call.caller), "Only a contract can call it!")
+         // require(Address.is_contract(Call.caller), "Only a contract can call it!")
          if(Map.lookup(Call.caller, state.reqc) == None)
             put(state{reqc[Call.caller] = 0})
          put(state{reqc[Call.caller] = state.reqc[Call.caller] + 1})
@@ -46,16 +46,20 @@ contract OracleConnector =
          uniq_id
         
     
+    stateful entrypoint respond (query_address: oracle_query(string,string), answer: string) : bool =
+        Oracle.respond(state.source_oracle, query_address, answer)
+        true
+    
     stateful entrypoint addCallBackAddress(addr: address) : bool =
         require(state.owners[Call.caller] == true, "Only owners can do this transaction")
         put(state{callback_addresses[addr] = true})
         true
 
     stateful entrypoint getAnswer(query_id: bytes(32)) : option(string) =
-        Oracle.get_answer(state.source_oracle, state.queries[query_id])
+        Oracle.get_answer(state.source_oracle, Map.lookup_default(query_id, state.queries, oq_7Cegjfke8zaYtVAhch4XswqVnyk1wCp5oUrGibkxvv5FrU9xq))
 
-    stateful entrypoint getQuery(query_id: bytes(32)) : oracle_query(string, string) =
-        state.queries[query_id]
+    stateful entrypoint getQuery(query_id: bytes(32)) : option(oracle_query(string, string)) =
+        Map.lookup(query_id, state.queries)
     // Changes - Not required anymore, Using different approach
 
     // stateful entrypoint changeBaseFee(new_fee: int) : bool =

@@ -77,7 +77,7 @@ contract MyContract =
     stateful entrypoint getAnswer() : option(string) =
       Say.getAnswer(state.query_id)
 
-    stateful entrypoint assignAnswer() : option(string) =
+    stateful entrypoint useAnswer() : option(string) =
       put(state{answer = Say.getAnswer(state.query_id)})
       state.answer
 

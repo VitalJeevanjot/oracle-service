@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { Universal, Node, MemoryAccount, Crypto } = require('@aeternity/aepp-sdk');
 const OracleContractCode = fs.readFileSync(__dirname + '/../contracts/OracleConnector.aes', 'utf-8');
-const contract_address = "ct_W9kYj9L1MxCEFi7iQhgNRGJe12veCsyAv5SjFYKzaC7BVRjaf";
+const contract_address = "ct_2Br7hTDyfgemSF4Jj12bkvdZPx9L237H8LJgu25h3y1j2Z7RFE";
 var url = "https://sdk-testnet.aepps.com"
 var processedIndex = 0
 var Compilerurl = "https://sdk-testnet.aepps.com"
@@ -77,7 +77,7 @@ async function createOracle () {
 
 async function getQuery () {
   arr = []
-  decodedResult = "29ccc829fd2613772acc79eccfb72bd242c1babf9103ea1888135ac735f8f5f1"
+  decodedResult = "ba2cbaf115595fe643d708a4626bc823b489f38a9c504df88d33a4d14e71d421"
   for (let index = 0; index < 64; index = index + 2) {
     if (decodedResult[index] == undefined) {
       arr.push("0x" + 00)
