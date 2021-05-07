@@ -1,0 +1,28 @@
+HTTP/1.1 200 OK
+Date: Fri, 07 May 2021 19:11:44 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 155
+Connection: keep-alive
+Set-Cookie: __cfduid=d58ccd0e045dcc7531b0618add1c169881620414704; expires=Sun, 06-Jun-21 19:11:44 GMT; path=/; domain=.pro.coinbase.com; HttpOnly; SameSite=Lax
+Access-Control-Allow-Headers: Content-Type, Accept, cb-session, cb-fp, cb-form-factor
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: cb-before, cb-after, cb-gdpr
+Access-Control-Max-Age: 7200
+Cache-Control: public, max-age=1, must-revalidate
+Etag: W/"9b-qsVqmamHCXtnjyRu+wWN93tj+6g"
+Strict-Transport-Security: max-age=15552000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Dns-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Xss-Protection: 1; mode=block
+CF-Cache-Status: HIT
+Age: 0
+Accept-Ranges: bytes
+cf-request-id: 09e9d743e200005b947c225000000001
+Expect-CT: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+Server: cloudflare
+CF-RAY: 64bcc17fd9625b94-IAD
+
+{"trade_id":108190076,"price":"3529.51","size":"0.16660117","time":"2021-05-07T19:11:44.062564Z","bid":"3529.3","ask":"3529.51","volume":"306690.12838045"}

@@ -1,0 +1,14 @@
+HTTP/1.1 200 OK
+Date: Fri, 07 May 2021 19:03:59 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+Set-Cookie: __cfduid=db301b06b67f8bdd09456a27df7e41a3e1620414238; expires=Sun, 06-Jun-21 19:03:58 GMT; path=/; domain=.poloniex.com; HttpOnly; SameSite=Lax; Secure
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET
+CF-Cache-Status: DYNAMIC
+cf-request-id: 09e9d028d60000e0fab480a000000001
+Expect-CT: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+Server: cloudflare
+CF-RAY: 64bcb6215db1e0fa-IAD
+
