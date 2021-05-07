@@ -1,0 +1,29 @@
+include "./libs/Say.aes"
+contract MyContract =
+    record state = {
+      query_id : bytes(32),
+      answer: option(string)
+     }
+
+    stateful entrypoint init() = 
+     Say.setOracle("oracle_proof")
+     {query_id = #000000000000000000000000000000000000000000000000000000000000000,
+      answer = None}
+    public entrypoint plus() : address =
+      Say.getOracleAddress()
+
+    payable stateful entrypoint query(args: string) : bytes(32) =
+      require(Say.getBaseFee() =< Call.value, "Insufficient fee")
+      let _id : bytes(32) = Say.query(args, Call.value)
+      put(state{query_id=_id})
+      _id
+    
+    stateful entrypoint getAnswer() : option(string) =
+      Say.getAnswer(state.query_id)
+
+    stateful entrypoint useAnswer() : option(string) =
+      put(state{answer = Say.getAnswer(state.query_id)})
+      state.answer
+      // You can use split function to split result from query...
+
+

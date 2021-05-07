@@ -1,4 +1,0 @@
-GET /products/ETH-USD/ticker HTTP/1.1
-accept: application/json
-Host: api.pro.coinbase.com
-
