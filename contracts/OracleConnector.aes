@@ -47,11 +47,12 @@ contract OracleConnector =
         
     
     stateful entrypoint respond (query_address: oracle_query(string,string), answer: string) : bool =
+        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
         Oracle.respond(state.source_oracle, query_address, answer)
         true
     
     stateful entrypoint addCallBackAddress(addr: address) : bool =
-        require(state.owners[Call.caller] == true, "Only owners can do this transaction")
+        require(canCallBack(), "Only accepted addresses can respond")
         put(state{callback_addresses[addr] = true})
         true
 
