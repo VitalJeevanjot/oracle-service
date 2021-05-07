@@ -2,6 +2,17 @@
 
 Oracle 2.0 provides API built on top of Aeternity blockchain Oracle Service to server URL requests. The API provided by Oracle 2.0 is connected to a smart contract which performs the Question/Answer operations and helps to Integrate More features into current Aeternity Oracle system.
 
+### Workflow
+
+
+![workflow-saynetwork](https://user-images.githubusercontent.com/40867747/117516776-a100eb00-afb7-11eb-8607-218cc5b0230a.png)
+
+
+### Problem it aims to solve
+![image](https://user-images.githubusercontent.com/40867747/117516725-8cbcee00-afb7-11eb-8225-185bde9aa265.png)
+
+
+
 Project have 3 seperate Ends:
 
 - [Smart contracts](https://github.com/genievot/oracle-service/tree/main/contracts)
