@@ -10,9 +10,9 @@ const OracleContractCode = fs.readFileSync(__dirname + '/../contracts/OracleConn
 const contract_address = "ct_2uEWFtsqEhErztjthHrt1UD5QPLAfnpWjDbYUN6FAT5aVZGyUd"
 var blake2b = require('blake2b')
 var axios = require('axios')
-var url = "https://sdk-testnet.aepps.com"
+var url = "https://testnet.aeternity.io/"
 var processedIndex = 0
-var Compilerurl = "https://sdk-testnet.aepps.com"
+var Compilerurl = "https://testnet.aeternity.io/"
 const BigNumber = require('bignumber.js');
 const conf = require('./conf.json')
 
