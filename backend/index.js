@@ -3,7 +3,7 @@ const requireESM = require('esm')(module);
 const fs = require('fs');
 const { Universal, Node, MemoryAccount, ContractACI } = require('@aeternity/aepp-sdk');
 const { decodeEvents, SOPHIA_TYPES } = requireESM('@aeternity/aepp-sdk/es/contract/aci/transformation');
-
+// query example: https://poloniex.com/public?command=returnTicker,BTC_BTS,id
 // import { parseBigNumber, asBigNumber, isBigNumber, ceil } from '@aeternity/aepp-sdk/es/utils/bignumber'
 const OracleContractCode = fs.readFileSync(__dirname + '/../contracts/OracleConnector.aes', 'utf-8');
 // oracle_plain
