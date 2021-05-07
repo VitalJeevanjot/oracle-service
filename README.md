@@ -22,3 +22,11 @@ Project have 3 seperate Ends:
 - Scripts/getQuery.js: It is multi purpose script (Form bytes to fetch query) for test purposes.
 
 
+### Backend
+- pagesigner: It is a tool provided by TLS notary developers for notarization (modified according to needs)
+- host_encryptr.js: It hosts backend to encrypt queries from fron-end requests
+- index.js: To fetch and answer oracle_plain
+- index_proof & index_ukey: These scripts have similar work as above, Except process queries differently.
+
+
+
