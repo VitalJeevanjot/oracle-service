@@ -19,6 +19,13 @@ Project have 3 seperate Ends:
 - merged.aes = This is sample contract for consumer, If you like to try editors where include Say.aes won't work. This will merge code from API library and consumer contract.
 
 
+![image](https://user-images.githubusercontent.com/40867747/117512340-0ef3e500-afad-11eb-9072-3ba4d470a044.png)
+
+
+![image](https://user-images.githubusercontent.com/40867747/117512236-de13b000-afac-11eb-8c6b-bd8cc6c8eee1.png)
+
+
+
 **Scripts**
 - Deploy Script: It merges and deploy merged.aes for demo purposes
 - Scripts/getQuery.js: It is multi purpose script (Form bytes to fetch query) for test purposes.
