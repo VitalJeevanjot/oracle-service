@@ -6,9 +6,11 @@ contract OracleConnector =
     record state = {
         source_oracle : oracle(string, string),
         reqc : map(address, int),
+        index_of_queries: int, // to read number of queries on interval
+        map_of_queries: map(int, oracle_query(string,string)), // get new queries to respond to, it can be used as unique id on purpose
         callback_addresses : map(address, bool),
         owners: map(address, bool),
-        queries: map(bytes(32), oracle_query(string, string)),
+        queries: map(bytes(32), oracle_query(string, string)), // for users to get their queries by unique id
         base_fee: int,
         ttl: int, // for oracle ttl
         qttl: int,
@@ -20,6 +22,8 @@ contract OracleConnector =
        let oracle_created : oracle(string, string) = createOracle()
        {source_oracle = oracle_created,
             reqc = {},
+            index_of_queries = 0,
+            map_of_queries = {},
             callback_addresses = {},
             owners = {[Call.caller] = true},
             base_fee = 1,
@@ -41,10 +45,21 @@ contract OracleConnector =
          // Required, so queries can be mapped with unique key
          let uniq_id : bytes(32) = Crypto.sha3(String.concat(String.concat(Address.to_str(Contract.address), Address.to_str(Call.caller)), Int.to_str(state.reqc[Call.caller])))
          require(state.base_fee =< Call.value, "insufficient value for qfee") 
-         put(state{queries[uniq_id] = Oracle.query(state.source_oracle, args, state.base_fee, RelativeTTL(state.qttl), RelativeTTL(state.rttl))})
+         let query_created : oracle_query(string, string) = Oracle.query(state.source_oracle, args, state.base_fee, RelativeTTL(state.qttl), RelativeTTL(state.rttl))
+         put(state{queries[uniq_id] = query_created})
+         put(state{map_of_queries[state.index_of_queries] = query_created})
+         put(state{index_of_queries = state.index_of_queries + 1})
          Chain.event(QueryCreated(state.source_oracle, uniq_id, Chain.timestamp, args))
          uniq_id
-        
+         
+    stateful entrypoint getIndexOfQueries() : int =
+        state.index_of_queries
+      
+    stateful entrypoint getQueryByNumber(number: int) : oracle_query(string, string) =
+        state.map_of_queries[number]    
+    
+    stateful entrypoint getQuestionByQuery(query: oracle_query(string,string)) : string =
+        Oracle.get_question(state.source_oracle, query)
     
     stateful entrypoint respond (query_address: oracle_query(string,string), answer: string) : bool =
         require(state.owners[Call.caller] == true, "Only owners can do this transaction")
@@ -61,6 +76,8 @@ contract OracleConnector =
 
     stateful entrypoint getQuery(query_id: bytes(32)) : option(oracle_query(string, string)) =
         Map.lookup(query_id, state.queries)
+        
+    
     // Changes - Not required anymore, Using different approach
 
     // stateful entrypoint changeBaseFee(new_fee: int) : bool =

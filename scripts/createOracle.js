@@ -8,7 +8,7 @@ var Compilerurl = "https://sdk-testnet.aepps.com"
 const BigNumber = require('bignumber.js');
 require('dotenv').config()
 
-console.log()
+// console.log()
 
 const keyPair = {
   "publicKey": process.env.PUBLIC_KEY,

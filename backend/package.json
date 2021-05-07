@@ -17,6 +17,7 @@
     "cryptr": "^6.0.2",
     "dotenv": "^9.0.0",
     "express": "^4.17.1",
+    "reconnecting-websocket": "^4.4.0",
     "websocket": "^1.0.32",
     "ws": "^7.4.5"
   }
