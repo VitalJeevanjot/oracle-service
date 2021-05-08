@@ -9,8 +9,8 @@ Oracle 2.0 provides API built on top of Aeternity blockchain Oracle Service to s
 
 
 
-### Problem it aims to solve
-![image](https://user-images.githubusercontent.com/40867747/117533608-5f019480-b00b-11eb-9b94-91e231a65e14.png)
+### General oracle system extended with:
+![image](https://user-images.githubusercontent.com/40867747/117533934-eac7f080-b00c-11eb-8d3a-070d9de47b77.png)
 
 
 
