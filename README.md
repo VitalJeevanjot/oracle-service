@@ -5,11 +5,12 @@ Oracle 2.0 provides API built on top of Aeternity blockchain Oracle Service to s
 ### Workflow
 
 
-![workflow-saynetwork](https://user-images.githubusercontent.com/40867747/117516776-a100eb00-afb7-11eb-8607-218cc5b0230a.png)
+![workflow-saynetwork (1)](https://user-images.githubusercontent.com/40867747/117533616-65900c00-b00b-11eb-9c68-22d7df1dca2c.png)
+
 
 
 ### Problem it aims to solve
-![image](https://user-images.githubusercontent.com/40867747/117516725-8cbcee00-afb7-11eb-8225-185bde9aa265.png)
+![image](https://user-images.githubusercontent.com/40867747/117533608-5f019480-b00b-11eb-9b94-91e231a65e14.png)
 
 
 
