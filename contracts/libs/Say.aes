@@ -1,13 +1,14 @@
-contract OracleConnector =
-    payable entrypoint query: (string) => bytes(32)
+contract interface OracleConnector =
+    payable entrypoint query : (string) => bytes(32)
     entrypoint getAnswer : (bytes(32)) => option(string)
     entrypoint canCallBack: () => bool
     entrypoint getBaseFee: () => int
 
-contract OraclesManager =
+contract interface OraclesManager =
     entrypoint getAddress : (string) => address
     entrypoint setContractOracle : (string) => bool
     entrypoint getContractOracle : (address) => string
+    entrypoint getListOfOracles : () => list(string)
 
 namespace Say =
 
