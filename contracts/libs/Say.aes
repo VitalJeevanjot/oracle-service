@@ -1,14 +1,10 @@
-namespace Saydummy =
-    public function dummy() : bool =
-        true
-
 contract OracleConnector =
     payable entrypoint query: (string) => bytes(32)
     entrypoint getAnswer : (bytes(32)) => option(string)
     entrypoint canCallBack: () => bool
     entrypoint getBaseFee: () => int
 
-contract OracleAddressResolver =
+contract OraclesManager =
     entrypoint getAddress : (string) => address
     entrypoint setContractOracle : (string) => bool
     entrypoint getContractOracle : (address) => string
@@ -16,20 +12,20 @@ contract OracleAddressResolver =
 namespace Say =
 
     record setup = {
-        oracle_address: OracleAddressResolver,
+        oracle_address: OraclesManager,
         oracle_connector: OracleConnector
       }
     // Must run this to select oracle at init
     public function setOracle(oracle_id: string) : bool =
-        let _oracle_address : OracleAddressResolver = ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
+        let _oracle_address : OraclesManager = ct_utMHaqF7wtV6fHFkGC8MiJ3zQeCwsviUayRTrpHTCAGMat6GU
         _oracle_address.setContractOracle(oracle_id)
     
     public function getOracleId() : string =
-        let _oracle_address : OracleAddressResolver = ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
+        let _oracle_address : OraclesManager = ct_utMHaqF7wtV6fHFkGC8MiJ3zQeCwsviUayRTrpHTCAGMat6GU
         _oracle_address.getContractOracle(Call.caller)
 
     public function set() : setup =
-        let _oracle_address : OracleAddressResolver = ct_DLcVgz1Wsd9D2XCdk2XqXZzSqaasVdpEStRgPDMajW24rrWFC
+        let _oracle_address : OraclesManager = ct_utMHaqF7wtV6fHFkGC8MiJ3zQeCwsviUayRTrpHTCAGMat6GU
         let _oracle_connector : OracleConnector = Address.to_contract(_oracle_address.getAddress(getOracleId()))
         
         {oracle_address = _oracle_address, oracle_connector = _oracle_connector}
@@ -49,8 +45,6 @@ namespace Say =
     stateful function query(args: string, value_received: int) : bytes(32) =
         set().oracle_connector.query(args, value = value_received)
 
+    public function availableOracles() : list(string) =
+        set().oracle_address.getListOfOracles()
 
-contract Boolean =
-  record boolean = {
-    ok: bool
-   }
